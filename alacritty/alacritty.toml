@@ -1,13 +1,13 @@
 general.live_config_reload = true
 
 general.import = [
-   "~/prd/src/ohohama-alacritty/ohohama.toml"
+  "~/prd/src/ohohama/alacritty/themes/ohohama.toml",
 ]
 
 [window]
-dimensions = { columns = 200, lines = 60 }
-padding = { x = 8, y = 4 }
+dimensions = {columns = 200, lines = 60}
 opacity = 100
+padding = {x = 8, y = 4}
 
 [cursor]
 style = "Beam"
@@ -17,11 +17,11 @@ history = 100000
 multiplier = 3
 
 [font]
-size = 14.0
-offset = { x = 0, y = 0 }
-glyph_offset = { x = 0, y = -1 }
-normal = { family = "Hack Nerd Font", style = "Regular" }
 builtin_box_drawing = true
+glyph_offset = {x = 0, y = -1}
+normal = {family = "Hack Nerd Font", style = "Regular"}
+offset = {x = 0, y = 0}
+size = 14.0
 
 [font.bold]
 family = "Hack Nerd Font"
