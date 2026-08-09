@@ -1,10 +1,10 @@
 format = """
 [](bg:blue fg:white)\
 [$username ](bg:color_0 fg:color_1)\
-[$directory ](bg:color_1 fg:color_2)\
-[$git_branch ](bg:color_2 fg:color_1)\
-[$git_status ](bg:color_1 fg:color_2)\
-[$time ](bg:color_2 fg:color_1)\
+[$directory ](bg:color_1 fg:color_0)\
+[$git_branch ](bg:color_0 fg:color_1)\
+[$git_status ](bg:color_1 fg:color_0)\
+[$time ](bg:color_0 fg:color_1)\
 [  ](bg:color_1 fg:color_0)
 > 
 """
@@ -19,13 +19,13 @@ palette = 'ieremii'
 [palettes.ieremii]
 color_0 = 'blue'
 color_1 = 'white'
-color_2 = 'yellow'
+color_2 = 'cyan'
 color_3 = 'black'
 
 [username]
 show_always = true
 style_user = "bg:color_0 fg:color_1"
-style_root = "bg:#9A348E"
+style_root = "bg:color_1 fg_color_2"
 format = '[ $user](none)'
 disabled = false
 
