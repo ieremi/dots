@@ -21,9 +21,16 @@
     "window.titleBarStyle": "custom",
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
+    "workbench.colorTheme": "Ohohama",
     "workbench.iconTheme": "quill-icons",
-    "editor.mouseWheelZoom": true,
-    "sort-json.settings.sortLevel": 3,
-    "editor.wordWrap": "on",
-    "workbench.colorTheme": "Ohohama"
+    "yaml.disableSchemaDetection": [
+        "**/docker-compose.yml",
+        "**/docker-compose.yaml",
+        "**/docker-compose.*.yml",
+        "**/docker-compose.*.yaml",
+        "**/compose.yml",
+        "**/compose.yaml",
+        "**/compose.*.yml",
+        "**/compose.*.yaml"
+    ]
 }
