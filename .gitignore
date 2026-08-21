@@ -13,5 +13,6 @@ const
 !.config/starship.toml
 !.config/alacritty
 !.config/bat
+!.config/zsh
 yazi/flavors
 yazi/plugins
