@@ -1,4 +1,4 @@
-export DOTFILES_DIR=$HOME/prd/src/linux_dotfiles
+export DOTFILES_DIR=$HOME/prd/src/dots
 source $DOTFILES_DIR/aliases.sh
 source $DOTFILES_DIR/misc.zsh
 
