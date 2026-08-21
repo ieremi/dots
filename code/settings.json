@@ -33,4 +33,12 @@
         "**/compose.*.yml",
         "**/compose.*.yaml"
     ]
+    "editor.mouseWheelZoom": true,
+    "sort-json.settings.sortLevel": 3,
+    "editor.wordWrap": "on",
+    "[ruby]": {
+        "editor.defaultFormatter": "Shopify.ruby-lsp",
+        "editor.formatOnSave": true
+    },
+    "workbench.colorTheme": "Ohohama"
 }
