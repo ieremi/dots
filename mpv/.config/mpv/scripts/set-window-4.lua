@@ -1,10 +1,11 @@
 local mp = require "mp"
 
 local function set_window_4()
-    local a = mp.get_property_number("ab-loop-a")
+    local p = mp.get_property_number("time-pos")
 
-    if a then
-        mp.set_property_number("ab-loop-b", a + 4)
+    if p then
+        mp.set_property_number("ab-loop-a", p - 2)
+        mp.set_property_number("ab-loop-b", p + 2)
     end
 end
 
