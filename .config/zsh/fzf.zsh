@@ -1,0 +1,1 @@
+export FZF_DEFAULT_OPTS='--color=bg:black,bg+:bright-black,fg:bright-white,fg+:white,hl:red,hl+:red,info:cyan,prompt:blue,pointer:blue,marker:cyan,spinner:cyan,header:bright-black,border:bright-black'
