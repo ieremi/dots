@@ -1,13 +1,16 @@
 // ==UserScript==
 // @name         YouTube AB Loop
-// @namespace    local.youtube.abloop
-// @version      1.1
-// @description  YouTube A-B loop with keyboard controls and URL sync
+// @namespace    https://github.com/ieremi/dots
+// @version      1.2
+// @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
+// @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Tampermonkey/ab-loop.user.js
+// @downloadURL  https://raw.githubusercontent.com/ieremi/dots/master/Tampermonkey/ab-loop.user.js
 // @grant        none
 // ==/UserScript==
 
 (function () {
+
     'use strict';
 
     function getVideo() {
