@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      1.2
+// @version      1.3
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -10,7 +10,6 @@
 // ==/UserScript==
 
 (function () {
-
     'use strict';
 
     function getVideo() {
@@ -20,34 +19,49 @@
     function getRange() {
         const params = new URLSearchParams(location.hash.slice(1));
 
-        const ss = Number(params.get('ss'));
-        const to = Number(params.get('to'));
-
+        const ss = params.has('ss') ? Number(params.get('ss')) : 0;
         const a = Number.isFinite(ss) ? ss : 0;
+
+        const to = params.has('to') ? Number(params.get('to')) : a + 4;
         const b = Number.isFinite(to) ? to : a + 4;
 
         return { a, b };
     }
 
     let { a, b } = getRange();
+    let enabled = true;
 
     function updateUrl() {
-        const hash = `ss=${a}&to=${b}`;
-        history.replaceState(
-            null,
-            '',
-            `${location.pathname}${location.search}#${hash}`
-        );
+        const url = new URL(location.href);
+        const params = new URLSearchParams(url.hash.slice(1));
+
+        if (enabled) {
+            params.set('ss', a);
+            params.set('to', b);
+        } else {
+            params.delete('ss');
+            params.delete('to');
+        }
+
+        const hash = params.toString();
+        url.hash = hash ? `#${hash}` : '';
+
+        history.replaceState(null, '', url);
     }
 
     function show() {
-        console.log(`[AB LOOP] A=${a} B=${b}`);
+        if (enabled) {
+            console.log(`[AB LOOP] A=${a} B=${b}`);
+        } else {
+            console.log('[AB LOOP] OFF');
+        }
     }
 
     function seekA() {
-        const v = getVideo();
-        if (v) {
-            v.currentTime = a;
+        const video = getVideo();
+
+        if (video) {
+            video.currentTime = a;
         }
     }
 
@@ -56,6 +70,17 @@
         b += seconds;
 
         seekA();
+        updateUrl();
+        show();
+    }
+
+    function toggleLoop() {
+        enabled = !enabled;
+
+        if (enabled) {
+            seekA();
+        }
+
         updateUrl();
         show();
     }
@@ -69,31 +94,35 @@
     }
 
     setInterval(() => {
-        const v = getVideo();
-        if (!v) return;
+        if (!enabled) return;
 
-        if (v.currentTime >= b) {
-            v.currentTime = a;
+        const video = getVideo();
+
+        if (!video) return;
+
+        if (video.currentTime >= b) {
+            video.currentTime = a;
         }
     }, 50);
 
-    document.addEventListener('keydown', (e) => {
-        if (isTyping(e.target)) return;
+    document.addEventListener('keydown', (event) => {
+        if (isTyping(event.target)) return;
 
         const keys = [
             'a', 'A',
             'b', 'B',
             'c', 'C',
-            'r', 'x'
+            'r', 'x',
+            'l'
         ];
 
-        if (!keys.includes(e.key)) return;
+        if (!keys.includes(event.key)) return;
 
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
 
-        switch (e.key) {
+        switch (event.key) {
             case 'a':
                 a = Math.max(0, a - 1);
                 seekA();
@@ -134,20 +163,24 @@
             case 'x':
                 seekA();
                 break;
+
+            case 'l':
+                toggleLoop();
+                return;
         }
 
         show();
     }, true);
 
     function initialize() {
-        const v = getVideo();
+        const video = getVideo();
 
-        if (!v) {
+        if (!video) {
             setTimeout(initialize, 200);
             return;
         }
 
-        v.currentTime = a;
+        video.currentTime = a;
         updateUrl();
         show();
     }
