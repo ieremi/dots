@@ -1,0 +1,6 @@
+keyBindings {
+    "Alt+H"{
+        id "core.open.directory"
+        src "~"
+    }
+}
