@@ -4,8 +4,8 @@
 // @version      1.2
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
-// @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Tampermonkey/ab-loop.user.js
-// @downloadURL  https://raw.githubusercontent.com/ieremi/dots/master/Tampermonkey/ab-loop.user.js
+// @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
+// @downloadURL  https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
 // @grant        none
 // ==/UserScript==
 
