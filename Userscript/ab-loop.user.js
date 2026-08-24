@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      1.4
+// @version      1.5
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -17,12 +17,23 @@
     }
 
     function getRange() {
-        const params = new URLSearchParams(location.hash.slice(1));
+        const hashParams = new URLSearchParams(location.hash.slice(1));
+        const queryParams = new URLSearchParams(location.search);
 
-        const ss = params.has('ss') ? Number(params.get('ss')) : 0;
+        const t = parseInt(queryParams.get('t'), 10);
+
+        const ss = hashParams.has('ss')
+            ? Number(hashParams.get('ss'))
+            : Number.isFinite(t)
+                ? t
+                : 0;
+
         const a = Number.isFinite(ss) ? ss : 0;
 
-        const to = params.has('to') ? Number(params.get('to')) : a + 4;
+        const to = hashParams.has('to')
+            ? Number(hashParams.get('to'))
+            : a + 4;
+
         const b = Number.isFinite(to) ? to : a + 4;
 
         return { a, b };
@@ -112,8 +123,8 @@
             'a', 'A',
             'b', 'B',
             'c', 'C',
-            'r', 'x',
-            'l', 's'
+            'r', 's',
+            'l'
         ];
 
         if (!keys.includes(event.key)) return;
@@ -160,7 +171,7 @@
                 updateUrl();
                 break;
 
-            case 'x':
+            case 's':
                 seekA();
                 break;
 
@@ -168,9 +179,6 @@
                 toggleLoop();
                 break;
 
-            case 's':
-                seekA();
-                return;
         }
 
         show();
