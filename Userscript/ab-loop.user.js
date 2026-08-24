@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      1.5
+// @version      1.6
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -123,6 +123,7 @@
             'a', 'A',
             'b', 'B',
             'c', 'C',
+            'g', 'G',
             'r', 's',
             'l'
         ];
@@ -163,6 +164,15 @@
             case 'C':
                 moveLoop(4);
                 return;
+
+            case 'g':
+                moveLoop(-2);
+                return;
+
+            case 'G':
+                moveLoop(-4);
+                return;
+
 
             case 'r':
                 a = 0;
