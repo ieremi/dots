@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      2.2
+// @version      2.3
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -330,7 +330,13 @@
         show();
     }, true);
 
+    let currentVideoId = null;
+
     function initialize() {
+        const videoId = new URL(location.href).searchParams.get('v');
+
+        if (!videoId || videoId === currentVideoId) return;
+
         const video = getVideo();
 
         if (!video) {
@@ -338,14 +344,23 @@
             return;
         }
 
+        currentVideoId = videoId;
+
+        ({ min, max } = getInitialRange());
+
         a = min;
         b = max;
+        enabled = true;
+        bounded = true;
 
         video.currentTime = a;
 
         updateUrl();
         show();
     }
+    document.addEventListener('yt-navigate-finish', () => {
+        initialize();
+    });
 
     initialize();
 })();
