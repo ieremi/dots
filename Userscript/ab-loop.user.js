@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      1.9
+// @version      2.0
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -16,35 +16,60 @@
         return document.querySelector('video');
     }
 
-    function getRange() {
+    function getInitialRange() {
         const hashParams = new URLSearchParams(location.hash.slice(1));
         const queryParams = new URLSearchParams(location.search);
 
         const t = parseInt(queryParams.get('t'), 10);
 
-        const ss = hashParams.has('ss')
-            ? Number(hashParams.get('ss'))
-            : Number.isFinite(t)
-                ? t
-                : 0;
+        const initialMin = hashParams.has('min')
+            ? Number(hashParams.get('min'))
+            : hashParams.has('ss')
+                ? Number(hashParams.get('ss'))
+                : Number.isFinite(t)
+                    ? t
+                    : 0;
 
-        const a = Number.isFinite(ss) ? ss : 0;
+        const min = Number.isFinite(initialMin)
+            ? Math.max(0, initialMin)
+            : 0;
 
-        const to = hashParams.has('to')
-            ? Number(hashParams.get('to'))
-            : a + 4;
+        const initialMax = hashParams.has('max')
+            ? Number(hashParams.get('max'))
+            : hashParams.has('to')
+                ? Number(hashParams.get('to'))
+                : min + 4;
 
-        const b = Number.isFinite(to) ? to : a + 4;
+        const max = Number.isFinite(initialMax) && initialMax > min
+            ? initialMax
+            : min + 4;
 
-        return { a, b };
+        return { min, max };
     }
 
-    let { a, b } = getRange();
+    let { min, max } = getInitialRange();
+
+    let a = min;
+    let b = max;
+
     let enabled = true;
+    let bounded = true;
+
+    function clamp(value, lower, upper) {
+        return Math.min(upper, Math.max(lower, value));
+    }
 
     function updateUrl() {
         const url = new URL(location.href);
         const params = new URLSearchParams(url.hash.slice(1));
+
+        if (bounded) {
+            params.set('min', min);
+            params.set('max', max);
+        } else {
+            params.delete('min');
+            params.delete('max');
+        }
 
         if (enabled) {
             params.set('ss', a);
@@ -55,17 +80,22 @@
         }
 
         const hash = params.toString();
+
         url.hash = hash ? `#${hash}` : '';
 
         history.replaceState(null, '', url);
     }
 
     function show() {
-        if (enabled) {
-            console.log(`[AB LOOP] A=${a} B=${b}`);
-        } else {
-            console.log('[AB LOOP] OFF');
-        }
+        const loop = enabled
+            ? `A=${a} B=${b}`
+            : 'LOOP=OFF';
+
+        const bounds = bounded
+            ? `MIN=${min} MAX=${max}`
+            : 'BOUNDS=OFF';
+
+        console.log(`[AB LOOP] ${loop} ${bounds}`);
     }
 
     function seekA() {
@@ -77,8 +107,15 @@
     }
 
     function moveLoop(seconds) {
-        a = Math.max(0, a + seconds);
-        b += seconds;
+        const duration = b - a;
+
+        if (bounded) {
+            a = clamp(a + seconds, min, max - duration);
+            b = a + duration;
+        } else {
+            a = Math.max(0, a + seconds);
+            b = a + duration;
+        }
 
         seekA();
         updateUrl();
@@ -91,8 +128,14 @@
         if (!video) return;
 
         enabled = true;
-        a = video.currentTime;
-        b = a + seconds;
+
+        if (bounded) {
+            a = clamp(video.currentTime, min, max);
+            b = Math.min(max, a + seconds);
+        } else {
+            a = video.currentTime;
+            b = a + seconds;
+        }
 
         seekA();
         updateUrl();
@@ -110,6 +153,30 @@
         show();
     }
 
+    function unbindLoop() {
+        enabled = false;
+
+        updateUrl();
+        show();
+    }
+
+    function unbindBounds() {
+        bounded = false;
+
+        updateUrl();
+        show();
+    }
+
+    function resetLoop() {
+        a = min;
+        b = max;
+        enabled = true;
+
+        seekA();
+        updateUrl();
+        show();
+    }
+
     function isTyping(element) {
         return (
             element instanceof HTMLInputElement ||
@@ -118,20 +185,20 @@
         );
     }
 
-    function unbindLoop() {
-        enabled = false;
-        updateUrl();
-        show();
-    }
-
     setInterval(() => {
-        if (!enabled) return;
-
         const video = getVideo();
 
         if (!video) return;
 
-        if (video.currentTime >= b) {
+        if (bounded) {
+            if (video.currentTime < min) {
+                video.currentTime = min;
+            } else if (video.currentTime > max) {
+                video.currentTime = max;
+            }
+        }
+
+        if (enabled && video.currentTime >= b) {
             video.currentTime = a;
         }
     }, 50);
@@ -146,7 +213,7 @@
             'g', 'G',
             'r', 'R',
             's',
-            'l',
+            'l', 'L',
             '2', '4'
         ];
 
@@ -158,24 +225,32 @@
 
         switch (event.key) {
             case 'a':
-                a = Math.max(0, a - 1);
+                a = bounded
+                    ? Math.max(min, a - 1)
+                    : Math.max(0, a - 1);
+
                 seekA();
                 updateUrl();
                 break;
 
             case 'A':
                 a = Math.min(b, a + 1);
+
                 seekA();
                 updateUrl();
                 break;
 
             case 'b':
                 b = Math.max(a, b - 1);
+
                 updateUrl();
                 break;
 
             case 'B':
-                b += 1;
+                b = bounded
+                    ? Math.min(max, b + 1)
+                    : b + 1;
+
                 updateUrl();
                 break;
 
@@ -195,13 +270,9 @@
                 moveLoop(-4);
                 return;
 
-
             case 'r':
-                a = 0;
-                b = 4;
-                seekA();
-                updateUrl();
-                break;
+                resetLoop();
+                return;
 
             case 'R':
                 unbindLoop();
@@ -213,6 +284,10 @@
 
             case 'l':
                 toggleLoop();
+                return;
+
+            case 'L':
+                unbindBounds();
                 return;
 
             case '2':
@@ -235,7 +310,11 @@
             return;
         }
 
+        a = min;
+        b = max;
+
         video.currentTime = a;
+
         updateUrl();
         show();
     }
