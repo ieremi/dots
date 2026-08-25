@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      2.1
+// @version      2.2
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -227,6 +227,7 @@
 
     document.addEventListener('keydown', (event) => {
         if (isTyping(event.target)) return;
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
 
         const keys = [
             'a', 'A',
