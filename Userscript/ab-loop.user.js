@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      1.7
+// @version      1.8
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -85,6 +85,15 @@
         show();
     }
 
+    function setLoop(seconds) {
+        a = video.currentTime
+        b = a + seconds;
+
+        seekA();
+        updateUrl();
+        show();
+    }
+
     function toggleLoop() {
         enabled = !enabled;
 
@@ -132,7 +141,8 @@
             'g', 'G',
             'r', 'R',
             's',
-            'l'
+            'l',
+            '2', '4'
         ];
 
         if (!keys.includes(event.key)) return;
@@ -200,6 +210,13 @@
                 toggleLoop();
                 break;
 
+            case '2':
+                setLoop(2);
+                return;
+
+            case '4':
+                setLoop(4);
+                return;
         }
 
         show();
