@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      2.0
+// @version      2.1
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -185,6 +185,28 @@
         );
     }
 
+    function roundParameters() {
+        min = Math.round(min);
+        max = Math.round(max);
+        a = Math.round(a);
+        b = Math.round(b);
+
+        min = Math.max(0, min);
+        max = Math.max(min, max);
+
+        if (bounded) {
+            a = clamp(a, min, max);
+            b = clamp(b, a, max);
+        } else {
+            a = Math.max(0, a);
+            b = Math.max(a, b);
+        }
+
+        seekA();
+        updateUrl();
+        show();
+    }
+
     setInterval(() => {
         const video = getVideo();
 
@@ -214,6 +236,7 @@
             'r', 'R',
             's',
             'l', 'L',
+            'z',
             '2', '4'
         ];
 
@@ -288,6 +311,10 @@
 
             case 'L':
                 unbindBounds();
+                return;
+
+            case 'z':
+                roundParameters();
                 return;
 
             case '2':
