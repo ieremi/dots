@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      1.8
+// @version      1.9
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
@@ -86,7 +86,12 @@
     }
 
     function setLoop(seconds) {
-        a = video.currentTime
+        const video = getVideo();
+
+        if (!video) return;
+
+        enabled = true;
+        a = video.currentTime;
         b = a + seconds;
 
         seekA();
@@ -208,7 +213,7 @@
 
             case 'l':
                 toggleLoop();
-                break;
+                return;
 
             case '2':
                 setLoop(2);
