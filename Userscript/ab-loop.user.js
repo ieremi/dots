@@ -1,10 +1,9 @@
 // ==UserScript==
 // @name         YouTube AB Loop
 // @namespace    https://github.com/ieremi/dots
-// @version      2.5
+// @version      2.6
 // @description  YouTube A-B loop
 // @match        https://www.youtube.com/watch*
-// @match        https://m.youtube.com/watch*
 // @updateURL    https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
 // @downloadURL  https://raw.githubusercontent.com/ieremi/dots/master/Userscript/ab-loop.user.js
 // @grant        none
@@ -17,173 +16,148 @@
         return document.querySelector('video');
     }
 
-    function parseTime(value) {
-        if (!value) return null;
-
-        if (/^\d+(?:\.\d+)?s?$/.test(value)) {
-            return Number.parseFloat(value);
+    function parseNumber(value) {
+        if (value === null || value === '') {
+            return null;
         }
 
-        const match = value.match(
-            /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/
-        );
-
-        if (!match) return null;
-
-        const hours = Number(match[1] || 0);
-        const minutes = Number(match[2] || 0);
-        const seconds = Number(match[3] || 0);
-
-        return hours * 3600 + minutes * 60 + seconds;
+        const number = Number(value);
+        return Number.isFinite(number) ? number : null;
     }
 
-    function getInitialBounds() {
-        const hashParams = new URLSearchParams(
-            location.hash.slice(1)
-        );
+    function getInitialState() {
+        const url = new URL(location.href);
+        const hashParams = new URLSearchParams(url.hash.slice(1));
 
-        const queryParams = new URLSearchParams(
-            location.search
-        );
+        const t = parseInt(url.searchParams.get('t'), 10);
+        const initialMin = Number.isFinite(t) ? t : 0;
 
-        const t = parseTime(queryParams.get('t'));
+        const min = hashParams.has('min')
+            ? parseNumber(hashParams.get('min'))
+            : initialMin;
 
-        const hashMin = hashParams.has('min')
-            ? Number(hashParams.get('min'))
+        const max = hashParams.has('max')
+            ? parseNumber(hashParams.get('max'))
             : null;
 
-        const initialMin = Number.isFinite(hashMin)
-            ? hashMin
-            : Number.isFinite(t)
-                ? t
-                : 0;
+        const a = hashParams.has('ss')
+            ? parseNumber(hashParams.get('ss'))
+            : min;
 
-        const min = Math.max(0, initialMin);
+        const b = hashParams.has('to')
+            ? parseNumber(hashParams.get('to'))
+            : max;
 
-        const hashMax = hashParams.has('max')
-            ? Number(hashParams.get('max'))
-            : null;
-
-        const max = Number.isFinite(hashMax) && hashMax >= min
-            ? hashMax
-            : null;
-
-        return { min, max };
+        return { min, max, a, b };
     }
 
-    let { min, max } = getInitialBounds();
+    let { min, max, a, b } = getInitialState();
 
-    let a = min;
-    let b = max;
-
-    let enabled = b !== null;
-    let boundsEnabled = true;
-    let currentVideoId = null;
-
-    function clamp(value, lower, upper) {
-        return Math.min(
-            upper,
-            Math.max(lower, value)
-        );
-    }
-
-    function clampToBounds(value) {
-        const lower = boundsEnabled ? min : 0;
-
-        if (boundsEnabled && max !== null) {
-            return clamp(value, lower, max);
+    function clamp(value) {
+        if (!Number.isFinite(value)) {
+            return value;
         }
 
-        return Math.max(lower, value);
+        if (min !== null) {
+            value = Math.max(min, value);
+        }
+
+        if (max !== null) {
+            value = Math.min(max, value);
+        }
+
+        return value;
+    }
+
+    function normalizeState() {
+        if (min !== null && max !== null && min > max) {
+            [min, max] = [max, min];
+        }
+
+        if (a !== null) {
+            a = clamp(a);
+        }
+
+        if (b !== null) {
+            b = clamp(b);
+        }
+
+        if (a !== null && b !== null && a > b) {
+            b = a;
+        }
+    }
+
+    function setOrDelete(params, name, value) {
+        if (value === null) {
+            params.delete(name);
+        } else {
+            params.set(name, String(value));
+        }
     }
 
     function updateUrl() {
         const url = new URL(location.href);
-        const params = new URLSearchParams(
-            url.hash.slice(1)
-        );
+        const params = new URLSearchParams(url.hash.slice(1));
 
-        if (boundsEnabled) {
-            params.set('min', min);
-
-            if (max !== null) {
-                params.set('max', max);
-            } else {
-                params.delete('max');
-            }
-        } else {
-            params.delete('min');
-            params.delete('max');
-        }
-
-        if (enabled && b !== null) {
-            params.set('ss', a);
-            params.set('to', b);
-        } else {
-            params.delete('ss');
-            params.delete('to');
-        }
+        setOrDelete(params, 'min', min);
+        setOrDelete(params, 'max', max);
+        setOrDelete(params, 'ss', a);
+        setOrDelete(params, 'to', b);
 
         const hash = params.toString();
-
-        url.hash = hash ? `#${hash}` : '';
+        url.hash = hash || '';
 
         history.replaceState(null, '', url);
     }
 
+    function format(value) {
+        return value === null ? '–' : value;
+    }
+
     function show() {
-        const loopStatus =
-            enabled && b !== null
-                ? `A=${a} B=${b}`
-                : 'LOOP=OFF';
-
-        let boundsStatus = 'BOUNDS=OFF';
-
-        if (boundsEnabled) {
-            boundsStatus = max !== null
-                ? `MIN=${min} MAX=${max}`
-                : `MIN=${min} MAX=NONE`;
-        }
-
         console.log(
-            `[AB LOOP] ${loopStatus} ${boundsStatus}`
+            `[AB LOOP] min=${format(min)} max=${format(max)} ` +
+            `A=${format(a)} B=${format(b)}`
         );
     }
 
-    function seekA() {
+    function seek(position) {
         const video = getVideo();
 
-        if (video) {
-            video.currentTime = a;
+        if (video && Number.isFinite(position)) {
+            video.currentTime = clamp(position);
+        }
+    }
+
+    function seekA() {
+        if (a !== null) {
+            seek(a);
         }
     }
 
     function moveLoop(seconds) {
-        if (b === null) return;
-
-        const duration = b - a;
-        const lower = boundsEnabled ? min : 0;
-
-        let nextA = a + seconds;
-
-        if (boundsEnabled && max !== null) {
-            const upper = Math.max(
-                lower,
-                max - duration
-            );
-
-            nextA = clamp(
-                nextA,
-                lower,
-                upper
-            );
-        } else {
-            nextA = Math.max(lower, nextA);
+        if (a === null || b === null) {
+            return;
         }
 
-        a = nextA;
-        b = a + duration;
+        const length = b - a;
+        let nextA = a + seconds;
+        let nextB = b + seconds;
 
+        if (min !== null && nextA < min) {
+            nextA = min;
+            nextB = min + length;
+        }
+
+        if (max !== null && nextB > max) {
+            nextB = max;
+            nextA = max - length;
+        }
+
+        a = clamp(nextA);
+        b = clamp(nextB);
+
+        normalizeState();
         seekA();
         updateUrl();
         show();
@@ -192,98 +166,71 @@
     function setLoop(seconds) {
         const video = getVideo();
 
-        if (!video) return;
-
-        a = clampToBounds(video.currentTime);
-        b = a + seconds;
-
-        if (boundsEnabled && max !== null) {
-            b = Math.min(b, max);
-        }
-
-        enabled = b > a;
-
-        seekA();
-        updateUrl();
-        show();
-    }
-
-    function toggleLoop() {
-        if (b === null) {
-            enabled = false;
-            updateUrl();
-            show();
+        if (!video) {
             return;
         }
 
-        enabled = !enabled;
+        a = clamp(video.currentTime);
+        b = clamp(a + seconds);
 
-        if (enabled) {
-            seekA();
-        }
-
+        normalizeState();
+        seekA();
         updateUrl();
         show();
     }
 
-    function unbindLoop() {
-        enabled = false;
-
-        updateUrl();
-        show();
-    }
-
-    function unbindBounds() {
-        boundsEnabled = false;
-
-        updateUrl();
-        show();
-    }
-
-    function resetLoop() {
+    // Reset [a, b] to [min, max].
+    function initializeLoop() {
         a = min;
         b = max;
-        enabled = b !== null;
 
+        normalizeState();
         seekA();
         updateUrl();
         show();
     }
 
+    // Set the position range to the current loop range.
+    function setPositionRange() {
+        if (a === null || b === null) {
+            console.log('[AB LOOP] A and B are not set');
+            return;
+        }
+
+        min = a;
+        max = b;
+
+        normalizeState();
+        updateUrl();
+        show();
+    }
+
+    // Unbind the A-B loop.
+    function unbindLoop() {
+        a = null;
+        b = null;
+
+        updateUrl();
+        show();
+    }
+
+    // Unbind the playback position range.
+    function unbindPositionRange() {
+        min = null;
+        max = null;
+
+        updateUrl();
+        show();
+    }
+
+    // Round all parameters to the nearest integer.
     function roundParameters() {
-        min = Math.max(0, Math.round(min));
-        a = Math.max(0, Math.round(a));
+        if (min !== null) min = Math.round(min);
+        if (max !== null) max = Math.round(max);
+        if (a !== null) a = Math.round(a);
+        if (b !== null) b = Math.round(b);
 
-        if (max !== null) {
-            max = Math.max(
-                min,
-                Math.round(max)
-            );
-        }
-
-        if (b !== null) {
-            b = Math.round(b);
-        }
-
-        if (boundsEnabled) {
-            a = clampToBounds(a);
-
-            if (b !== null) {
-                b = Math.max(a, b);
-
-                if (max !== null) {
-                    b = Math.min(b, max);
-                }
-            }
-        } else {
-            b = b === null
-                ? null
-                : Math.max(a, b);
-        }
-
-        enabled = enabled && b !== null && b > a;
-
-        seekA();
+        normalizeState();
         updateUrl();
         show();
     }
@@ -299,224 +246,186 @@
     setInterval(() => {
         const video = getVideo();
 
-        if (!video) return;
-
-        if (boundsEnabled) {
-            if (video.currentTime < min) {
-                video.currentTime = min;
-                return;
-            }
-
-            if (
-                max !== null &&
-                video.currentTime > max
-            ) {
-                video.currentTime = max;
-                return;
-            }
+        if (!video) {
+            return;
         }
 
+        // Give the A-B loop priority over the position range.
         if (
-            enabled &&
+            a !== null &&
             b !== null &&
             video.currentTime >= b
         ) {
             video.currentTime = a;
+            return;
+        }
+
+        // Keep the playback position within [min, max].
+        if (min !== null && video.currentTime < min) {
+            video.currentTime = min;
+            return;
+        }
+
+        if (max !== null && video.currentTime > max) {
+            video.currentTime = max;
+            video.pause();
         }
     }, 50);
 
-    document.addEventListener(
-        'keydown',
-        (event) => {
-            if (isTyping(event.target)) return;
+    document.addEventListener('keydown', (event) => {
+        if (isTyping(event.target)) {
+            return;
+        }
 
-            if (
-                event.metaKey ||
-                event.ctrlKey ||
-                event.altKey
-            ) {
-                return;
-            }
-
-            const keys = [
-                'a', 'A',
-                'b', 'B',
-                'c', 'C',
-                'g', 'G',
-                'r', 'R',
-                's',
-                'l', 'L',
-                'z',
-                '2', '4'
-            ];
-
-            if (!keys.includes(event.key)) return;
-
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-
-            switch (event.key) {
-                case 'a':
-                    a = Math.max(
-                        boundsEnabled ? min : 0,
-                        a - 1
-                    );
-
-                    seekA();
-                    updateUrl();
-                    break;
-
-                case 'A':
-                    a = Math.min(
-                        b !== null ? b : Infinity,
-                        a + 1
-                    );
-
-                    if (
-                        boundsEnabled &&
-                        max !== null
-                    ) {
-                        a = Math.min(a, max);
-                    }
-
-                    seekA();
-                    updateUrl();
-                    break;
-
-                case 'b':
-                    if (b === null) return;
-
-                    b = Math.max(a, b - 1);
-
-                    enabled = b > a;
-
-                    updateUrl();
-                    break;
-
-                case 'B':
-                    if (b === null) {
-                        b = a + 1;
-                    } else {
-                        b += 1;
-                    }
-
-                    if (
-                        boundsEnabled &&
-                        max !== null
-                    ) {
-                        b = Math.min(b, max);
-                    }
-
-                    enabled = b > a;
-
-                    updateUrl();
-                    break;
-
-                case 'c':
-                    moveLoop(2);
-                    return;
-
-                case 'C':
-                    moveLoop(4);
-                    return;
-
-                case 'g':
-                    moveLoop(-2);
-                    return;
-
-                case 'G':
-                    moveLoop(-4);
-                    return;
-
-                case 'r':
-                    resetLoop();
-                    return;
-
-                case 'R':
-                    unbindLoop();
-                    return;
-
-                case 's':
-                    seekA();
-                    break;
-
-                case 'l':
-                    toggleLoop();
-                    return;
-
-                case 'L':
-                    unbindBounds();
-                    return;
-
-                case 'z':
-                    roundParameters();
-                    return;
-
-                case '2':
-                    setLoop(2);
-                    return;
-
-                case '4':
-                    setLoop(4);
-                    return;
-            }
-
-            show();
-        },
-        true
-    );
-
-    function initialize(force = false) {
-        const videoId = new URL(
-            location.href
-        ).searchParams.get('v');
-
-        if (!videoId) return;
-
+        // Do not intercept shortcuts such as Cmd+C, Ctrl+C, or Cmd+L.
         if (
-            !force &&
-            videoId === currentVideoId
+            event.metaKey ||
+            event.ctrlKey ||
+            event.altKey
         ) {
             return;
         }
 
-        const video = getVideo();
+        const keys = [
+            'a', 'A',
+            'b', 'B',
+            'c', 'C',
+            'g', 'G',
+            'p',
+            'l', 'L',
+            'r',
+            's',
+            '2', '4',
+            'z'
+        ];
 
-        if (!video) {
-            setTimeout(
-                () => initialize(force),
-                200
-            );
-
+        if (!keys.includes(event.key)) {
             return;
         }
 
-        currentVideoId = videoId;
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
 
-        ({ min, max } = getInitialBounds());
+        switch (event.key) {
+            case 'a':
+                if (a !== null) {
+                    a = clamp(a - 1);
 
-        a = min;
-        b = max;
+                    if (b !== null) {
+                        a = Math.min(a, b);
+                    }
 
-        enabled = b !== null;
-        boundsEnabled = true;
+                    seekA();
+                    updateUrl();
+                    show();
+                }
+                return;
 
-        video.currentTime = a;
+            case 'A':
+                if (a !== null) {
+                    a = clamp(a + 1);
 
+                    if (b !== null) {
+                        a = Math.min(a, b);
+                    }
+
+                    seekA();
+                    updateUrl();
+                    show();
+                }
+                return;
+
+            case 'b':
+                if (b !== null) {
+                    b = clamp(b - 1);
+
+                    if (a !== null) {
+                        b = Math.max(a, b);
+                    }
+
+                    updateUrl();
+                    show();
+                }
+                return;
+
+            case 'B':
+                if (b !== null) {
+                    b = clamp(b + 1);
+
+                    if (a !== null) {
+                        b = Math.max(a, b);
+                    }
+
+                    updateUrl();
+                    show();
+                }
+                return;
+
+            case 'c':
+                moveLoop(2);
+                return;
+
+            case 'C':
+                moveLoop(4);
+                return;
+
+            case 'g':
+                moveLoop(-2);
+                return;
+
+            case 'G':
+                moveLoop(-4);
+                return;
+
+            case 'p':
+                setPositionRange();
+                return;
+
+            case 'l':
+                unbindLoop();
+                return;
+
+            case 'L':
+                unbindPositionRange();
+                return;
+
+            case 'r':
+                initializeLoop();
+                return;
+
+            case 's':
+                seekA();
+                show();
+                return;
+
+            case '2':
+                setLoop(2);
+                return;
+
+            case '4':
+                setLoop(4);
+                return;
+
+            case 'z':
+                roundParameters();
+                return;
+        }
+    }, true);
+
+    function start() {
+        const video = getVideo();
+
+        if (!video) {
+            setTimeout(start, 200);
+            return;
+        }
+
+        normalizeState();
+        seekA();
         updateUrl();
         show();
     }
 
-    document.addEventListener(
-        'yt-navigate-finish',
-        () => {
-            setTimeout(
-                () => initialize(true),
-                300
-            );
-        }
-    );
-
-    initialize();
+    start();
 })();
