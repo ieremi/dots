@@ -1,0 +1,101 @@
+/* ==UserStyle==
+@name           bakusai thread
+@namespace      bakusai.com
+@version        1.0.0
+@description    爆サイのスレッド: 広告・ナビ除去、レスを段組み表示、ページングのみ残す
+@preprocessor   default
+==/UserStyle== */
+
+@-moz-document url-prefix("https://bakusai.com/thr_res/") {
+
+  /* ---- 不要要素 ---- */
+  #global_header,
+  #container.container_header,
+  #largeBbsTitle,
+  .bread_social_wrap,
+  #banner_top,
+  .reslist_td > .center,          /* バナースライダー */
+  #top_menu,
+  #recommend,
+  .thrWholeRight,                 /* 右サイド広告 */
+  .thrWholeBtm,                   /* [PR] 帯 */
+  td.resform,                     /* 投稿フォーム */
+  .paging_nex_res_and_button,
+  .urlCopyContainer,
+  .bbs_mainmenu,
+  #banner_bottom_rectangle,
+  #relatedBoard,
+  #footer,
+  footer,
+  .shiftUP,
+  .rating_good_bad,
+  .goodbad_entry_guide,
+  [class^="pc_ad_"],
+  [class*=" pc_ad_"],
+  [class*="ad_back_"],
+  ins.adsbygoogle,
+  [id^="google_ads"],
+  body > iframe {
+    display: none !important;
+  }
+
+  /* ---- 全体幅 ---- */
+  #container {
+    display: block !important;
+    width: auto !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+  #container table#inner_container {
+    min-width: 0 !important;
+    border: 0 !important;
+  }
+  .thrWhole .thrWholeLeft {
+    width: auto !important;
+  }
+
+  /* ---- スレタイ ---- */
+  dl.thr_top dt.titleheader {
+    padding: 2px 8px !important;
+  }
+
+  /* ---- レス段組み ---- */
+  dl#res_list {
+    column-width: 24em;
+    column-gap: 1.5em;
+    column-rule: 1px solid #ddd;
+    padding: 8px 12px;
+    margin: 0;
+  }
+  dl#res_list .article {
+    break-inside: avoid;
+    margin: 0 0 6px !important;
+    padding-bottom: 4px;
+    border-bottom: 1px dotted #ccc;
+  }
+  dl#res_list dd.body {
+    display: block !important;
+    width: auto !important;
+    margin: 2px 0 0 !important;
+  }
+  dl#res_list .article dt span.resnumb {
+    font-weight: bold;
+  }
+  dl#res_list .name_goodbad_box,
+  dl#res_list dd.name {
+    margin: 0 !important;
+    text-align: right;
+    font-size: 11px !important;
+  }
+
+  /* ---- ページング: 画面下に固定 ---- */
+  .paging {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    margin: 0 !important;
+    padding: 4px 0 !important;
+    background: #fff;
+    border-top: 1px solid #ccc;
+  }
+}
