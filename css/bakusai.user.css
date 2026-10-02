@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.6.0
+@version        1.6.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -64,10 +64,15 @@ url-prefix("https://bakusai.com/thr_tl/") {
     }
 
     /* ---- 左ナビなど: 本文を含まない兄弟要素をすべて隠す ---- */
-    body> :not(:has(#res_list, .thr_top, .paging, #global_menu)):not(#global_menu, script, style),
-    body :has(#res_list)> :not(:has(#res_list, .thr_top, .paging)):not(#res_list, .thr_top, .paging, script, style),
-    body :has(#global_menu)> :not(:has(#global_menu, #res_list, .thr_top, .paging)):not(#global_menu, #res_list, .thr_top, .paging, script, style) {
+    body> :not(:has(#res_list, .thr_top, .paging, #res_anchor_popup, #global_menu)):not(#global_menu, #res_anchor_popup, script, style),
+    body :has(#res_list)> :not(:has(#res_list, .thr_top, .paging, #res_anchor_popup)):not(#res_list, .thr_top, .paging, #res_anchor_popup, script, style),
+    body :has(#global_menu)> :not(:has(#global_menu, #res_list, .thr_top, .paging, #res_anchor_popup)):not(#global_menu, #res_list, .thr_top, .paging, #res_anchor_popup, script, style) {
         display: none !important;
+    }
+
+    /* ---- アンカー (>>123) のポップアップ: カードより手前に ---- */
+    #res_anchor_popup {
+        z-index: 100 !important;
     }
 
     /* ---- 全体幅: 本文までの祖先を全幅に ---- */
