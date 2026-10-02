@@ -1,14 +1,30 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.4.0
-@description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す
+@version        1.5.0
+@description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
 @var range      cardH "カードの高さ" [9, 4, 30, 0.5, "em"]
 @var range      resScale "レスの文字の倍率" [0.8, 0.5, 1.5, 0.05]
 ==/UserStyle== */
 
+/* ---- 共通: 配色 ---- */
+@-moz-document url-prefix("https://bakusai.com/thr_res/"),
+url-prefix("https://bakusai.com/thr_res_show/") {
+    :root {
+        --bg: #f2f2f2;
+        --fg: #222;
+        --muted: #8a8a8a;
+        --line: #d9d9d9;
+        --accent: #1f5fbf;
+        --link: #2b6cd4;
+        --title: #1a3a6b;
+        --card: #fff;
+    }
+}
+
+/* ==== スレッド ==== */
 @-moz-document url-prefix("https://bakusai.com/thr_res/") {
 
     /* ---- 不要要素 ---- */
@@ -80,17 +96,6 @@
     body :has(#res_list),
     dl.thr_top {
         background: var(--bg) !important;
-    }
-
-    :root {
-        --bg: #f2f2f2;
-        --fg: #222;
-        --muted: #8a8a8a;
-        --line: #d9d9d9;
-        --accent: #1f5fbf;
-        --link: #2b6cd4;
-        --title: #1a3a6b;
-        --card: #fff;
     }
 
     body {
@@ -245,5 +250,90 @@
         padding: 3px 0 !important;
         background: var(--bg) !important;
         border-top: 1px solid var(--line);
+    }
+}
+
+/* ==== レス単独表示 ==== */
+@-moz-document url-prefix("https://bakusai.com/thr_res_show/") {
+
+    /* ---- 不要要素 ---- */
+    #container.container_header,
+    #largeBbsTitle,
+    #inner_container hr,
+    .bbs_mainmenu,
+    .rating_good_bad,
+    .goodbad_entry_guide,
+    #footer,
+    footer,
+    [class^="pc_ad_"],
+    [class*=" pc_ad_"],
+    [class*="ad_back_"],
+    ins.adsbygoogle,
+    [id^="google_ads"] {
+        display: none !important;
+    }
+
+    /* ---- 全体: 中央に読みやすい幅で ---- */
+    html,
+    body,
+    html body.noframe_body {
+        max-width: none !important;
+        min-width: 0 !important;
+        background: var(--bg) !important;
+        color: var(--fg) !important;
+    }
+
+    #container,
+    #container table#inner_container,
+    #container table#inner_container td {
+        display: block !important;
+        width: auto !important;
+        min-width: 0 !important;
+        border: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    #container {
+        max-width: 48em !important;
+        margin: 16px auto !important;
+    }
+
+    /* ---- パンくず ---- */
+    #breadcrumbs {
+        margin: 0 4px 8px !important;
+        color: var(--muted) !important;
+    }
+
+    #breadcrumbs a {
+        color: var(--link) !important;
+    }
+
+    /* ---- レス本体: カード ---- */
+    dl#thr_top {
+        margin: 0 !important;
+        padding: 12px 16px !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 6px;
+        background: var(--card) !important;
+        color: var(--fg) !important;
+        line-height: 1.6;
+    }
+
+    dl#thr_top * {
+        background-color: transparent !important;
+        color: inherit !important;
+    }
+
+    dl#thr_top a {
+        color: var(--link) !important;
+    }
+
+    /* ---- 下のボタン類 ---- */
+    .thrBtmInfo {
+        margin: 8px 0 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
     }
 }
