@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.7.2
+@version        1.8.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -583,5 +583,63 @@ url-prefix("https://bakusai.com/thr_tl/") {
     #thrListInner .chart_balloon,
     #thrListInner .comment_balloon {
         display: none !important;
+    }
+}
+
+/* ==== 関連掲示板 (スレッド一覧・レス単独表示) ==== */
+@-moz-document url-prefix("https://bakusai.com/thr_tl/"),
+url-prefix("https://bakusai.com/thr_res_show/") {
+
+    #relatedBoard {
+        display: block !important;
+        margin: 12px 8px !important;
+        padding: 8px 0 0 !important;
+        border: 0 !important;
+        border-top: 1px solid var(--line) !important;
+        background: transparent !important;
+        /* 半角カタカナを全角に */
+        text-transform: full-width;
+    }
+
+    #relatedBoard,
+    #relatedBoard * {
+        background-color: transparent !important;
+        color: var(--muted) !important;
+    }
+
+    /* 区切りの「|」(テキスト) を消して、リンクを同じ幅で並べる */
+    #relatedBoard :has(> a) {
+        display: block !important;
+        width: auto !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+    }
+
+    #relatedBoard :has(> a)>* {
+        font-size: 13px !important;
+        line-height: 1.6 !important;
+    }
+
+    #relatedBoard a {
+        display: inline-block !important;
+        box-sizing: border-box;
+        width: 16em;
+        padding: 1px 8px 1px 0 !important;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        vertical-align: top;
+        color: #3b5680 !important;
+        text-decoration: none !important;
+    }
+
+    #relatedBoard a:hover {
+        color: var(--link) !important;
+        text-decoration: underline !important;
+    }
+
+    #relatedBoard img {
+        filter: grayscale(1);
+        opacity: 0.7;
     }
 }
