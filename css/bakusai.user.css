@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.7.0
+@version        1.7.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -466,7 +466,10 @@ url-prefix("https://bakusai.com/thr_tl/") {
     [class*="ad_back_"],
     ins.adsbygoogle,
     [id^="google_ads"],
-    [id^="Adstir"] {
+    [id^="Adstir"],
+    /* バナースライダー (自社広告) とその入れ物 */
+    .slick-slider:has(a.mypage_release),
+    :has(> .slick-slider a.mypage_release):not(:has(#thrListInner)) {
         display: none !important;
     }
 
