@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.0.1
+@version        1.1.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを段組み表示、ページングのみ残す
 @preprocessor   default
 ==/UserStyle== */
@@ -43,79 +43,130 @@
         display: none !important;
     }
 
-    /* ---- 全体幅 ---- */
+    /* ---- 左ナビなど: 本文を含まない兄弟要素をすべて隠す ---- */
+    body :has(#res_list)> :not(:has(#res_list, .thr_top, .paging)):not(#res_list, .thr_top, .paging, script, style) {
+        display: none !important;
+    }
+
+    /* ---- 全体幅: 本文までの祖先を全幅に ---- */
     html,
     body,
-    #contents {
-        min-width: 0 !important;
-    }
-
-    #contents,
-    #container {
-        display: block !important;
+    body :has(#res_list) {
         width: auto !important;
-        border: 0 !important;
-        padding: 0 !important;
-    }
-
-    #container table#inner_container {
         min-width: 0 !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        float: none !important;
         border: 0 !important;
     }
 
-    .thrWhole .thrWholeLeft {
-        width: auto !important;
+    table:has(#res_list) {
+        width: 100% !important;
+    }
+
+    /* ---- 配色 ---- */
+    html,
+    body,
+    body :has(#res_list),
+    dl.thr_top {
+        background: var(--bg) !important;
+    }
+
+    :root {
+        --bg: #f7f7f5;
+        --fg: #222;
+        --muted: #8a8a8a;
+        --line: #e4e2dd;
+        --accent: #2f6f8f;
+        --link: #3b6fd4;
+        --title: #1d3557;
+    }
+
+    body {
+        color: var(--fg) !important;
     }
 
     /* ---- スレタイ ---- */
+    dl.thr_top {
+        margin: 0 !important;
+        padding: 6px 12px 4px !important;
+        border-bottom: 1px solid var(--line) !important;
+    }
+
     dl.thr_top dt.titleheader {
-        padding: 2px 8px !important;
+        padding: 0 !important;
+        border: 0 !important;
+        color: var(--title) !important;
     }
 
     /* ---- レス段組み ---- */
     dl#res_list {
         column-width: 24em;
-        column-gap: 1.5em;
-        column-rule: 1px solid #ddd;
-        padding: 8px 12px;
+        column-gap: 20px;
+        column-rule: 1px solid var(--line);
+        padding: 6px 12px;
         margin: 0;
     }
 
     dl#res_list .article {
         break-inside: avoid;
-        margin: 0 0 4px !important;
-        padding: 0 0 2px !important;
+        margin: 0 !important;
+        padding: 4px 0 !important;
         min-height: 0 !important;
-        border-bottom: 1px dotted #ccc;
+        border: 0 !important;
+        border-bottom: 1px solid var(--line) !important;
+        background: transparent !important;
     }
 
-    dl#res_list .article>* {
+    dl#res_list .article *:not(a, span, b, strong, em, font, img) {
         margin-top: 0 !important;
         margin-bottom: 0 !important;
         padding-top: 0 !important;
         padding-bottom: 0 !important;
         min-height: 0 !important;
-        line-height: 1.4 !important;
+        height: auto !important;
+    }
+
+    dl#res_list .article,
+    dl#res_list .article * {
+        line-height: 1.45 !important;
+    }
+
+    dl#res_list .article dt {
+        color: var(--muted) !important;
+        font-size: 12px !important;
+    }
+
+    dl#res_list .article dt span.resnumb,
+    dl#res_list .article dt span.resnumb a {
+        color: var(--accent) !important;
+        font-weight: bold;
     }
 
     dl#res_list dd.body {
         display: block !important;
         width: auto !important;
-        margin: 2px 0 0 !important;
+        color: var(--fg) !important;
     }
 
-    dl#res_list .article dt span.resnumb {
-        font-weight: bold;
+    dl#res_list dd.body a {
+        color: var(--link) !important;
     }
 
     dl#res_list .name_goodbad_box,
-    dl#res_list dd.name {
+    dl#res_list dd.name,
+    dl#res_list dd.name * {
         margin: 0 !important;
         padding: 0 !important;
         min-height: 0 !important;
         line-height: 1.2 !important;
         text-align: right;
         font-size: 11px !important;
+        color: var(--muted) !important;
+        background: transparent !important;
     }
 
     /* ---- ページング: 画面下に固定 ---- */
@@ -124,8 +175,8 @@
         bottom: 0;
         z-index: 10;
         margin: 0 !important;
-        padding: 4px 0 !important;
-        background: #fff;
-        border-top: 1px solid #ccc;
+        padding: 3px 0 !important;
+        background: var(--bg) !important;
+        border-top: 1px solid var(--line);
     }
 }
