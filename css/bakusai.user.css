@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.1.0
+@version        1.1.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを段組み表示、ページングのみ残す
 @preprocessor   default
 ==/UserStyle== */
@@ -44,14 +44,20 @@
     }
 
     /* ---- 左ナビなど: 本文を含まない兄弟要素をすべて隠す ---- */
+    body> :not(:has(#res_list, .thr_top, .paging, #global_menu)):not(#global_menu, script, style),
     body :has(#res_list)> :not(:has(#res_list, .thr_top, .paging)):not(#res_list, .thr_top, .paging, script, style) {
         display: none !important;
     }
 
     /* ---- 全体幅: 本文までの祖先を全幅に ---- */
+    body :has(#res_list) {
+        display: block !important;
+    }
+
     html,
     body,
-    body :has(#res_list) {
+    body :has(#res_list),
+    dl#res_list {
         width: auto !important;
         min-width: 0 !important;
         max-width: none !important;
@@ -61,10 +67,6 @@
         padding-right: 0 !important;
         float: none !important;
         border: 0 !important;
-    }
-
-    table:has(#res_list) {
-        width: 100% !important;
     }
 
     /* ---- 配色 ---- */
