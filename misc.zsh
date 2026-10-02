@@ -5,7 +5,7 @@ export EDITOR='vim'
 export VISUAL=$EDITOR
 export GIT_EDITOR=$EDITOR
 
-export HISTFILE=${HOME}/linux_dotfiles/.zsh_history
+export HISTFILE=${HOME}/dots/.zsh_history
 export HISTSIZE=1000
 export SAVEHIST=100000
 setopt append_history

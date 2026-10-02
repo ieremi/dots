@@ -6,7 +6,7 @@ else
 fi
 
 export SRC=$PRD/src
-DOTDIR=$SRC/linux_dotfiles
+DOTDIR=$SRC/dots
 MAPDIR=$DOTDIR
 
 
@@ -23,3 +23,4 @@ fi
 . "$HOME/.cargo/env"
 
 export LC_ALL=C.UTF-8
+. "/home/ieremius/.deno/env"
