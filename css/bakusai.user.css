@@ -1,11 +1,12 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.3.0
+@version        1.4.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
 @var range      cardH "カードの高さ" [9, 4, 30, 0.5, "em"]
+@var range      resScale "レスの文字の倍率" [0.8, 0.5, 1.5, 0.05]
 ==/UserStyle== */
 
 @-moz-document url-prefix("https://bakusai.com/thr_res/") {
@@ -117,6 +118,8 @@
         gap: 10px;
         padding: 8px !important;
         margin: 0;
+        /* px 指定の文字も含めてまとめて縮める */
+        zoom: var(--resScale);
     }
 
     dl#res_list .article {
