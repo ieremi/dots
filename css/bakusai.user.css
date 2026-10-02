@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.6.2
+@version        1.7.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -74,6 +74,70 @@ url-prefix("https://bakusai.com/thr_tl/") {
     #res_anchor_popup,
     .tipso_bubble {
         z-index: 100 !important;
+    }
+
+    /* ポップアップの中身もカードと同じ見た目に */
+    .tipso_bubble,
+    #res_anchor_popup .resOverlayShow {
+        background: var(--card) !important;
+        color: var(--fg) !important;
+        border: 1px solid var(--accent) !important;
+        border-radius: 6px !important;
+        box-shadow: 0 4px 16px rgb(0 0 0 / 0.18) !important;
+        padding: 6px 10px !important;
+        text-align: left !important;
+        line-height: 1.45 !important;
+    }
+
+    /* 文字の大きさはレスと同じ倍率 (位置計算を崩さないよう中身だけ縮める) */
+    .tipso_bubble>*,
+    #res_anchor_popup .resOverlayShow>* {
+        zoom: var(--resScale);
+    }
+
+    .tipso_bubble *,
+    #res_anchor_popup .resOverlayShow * {
+        background: transparent !important;
+        color: inherit !important;
+        text-shadow: none !important;
+        text-align: left !important;
+    }
+
+    .tipso_bubble a,
+    #res_anchor_popup .resOverlayShow a {
+        color: var(--link) !important;
+    }
+
+    .tipso_bubble .res_rotundate a,
+    #res_anchor_popup .res_rotundate a {
+        color: var(--accent) !important;
+        font-weight: bold;
+    }
+
+    .tipso_bubble .res_header,
+    .tipso_bubble .name,
+    .tipso_bubble .transTarget,
+    #res_anchor_popup .res_header,
+    #res_anchor_popup .name,
+    #res_anchor_popup .transTarget {
+        color: var(--muted) !important;
+        font-size: 12px !important;
+    }
+
+    .tipso_bubble .res_header span+span {
+        margin-left: 6px;
+    }
+
+    .tipso_bubble ul,
+    #res_anchor_popup ul {
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+    }
+
+    /* 吹き出しの三角は消す */
+    .tipso_bubble .tipso_arrow {
+        display: none !important;
     }
 
     /* ---- 全体幅: 本文までの祖先を全幅に ---- */
