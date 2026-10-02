@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.5.0
+@version        1.5.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -257,6 +257,7 @@ url-prefix("https://bakusai.com/thr_res_show/") {
 @-moz-document url-prefix("https://bakusai.com/thr_res_show/") {
 
     /* ---- 不要要素 ---- */
+    #global_header,
     #container.container_header,
     #largeBbsTitle,
     #inner_container hr,
@@ -329,11 +330,48 @@ url-prefix("https://bakusai.com/thr_res_show/") {
         color: var(--link) !important;
     }
 
-    /* ---- 下のボタン類 ---- */
+    /* ---- 下のボタン類: 地のテキスト + 枠線だけのボタン ---- */
     .thrBtmInfo {
-        margin: 8px 0 0 !important;
+        margin: 10px 0 0 !important;
         padding: 0 !important;
         border: 0 !important;
         background: transparent !important;
+    }
+
+    .thrBtmInfo,
+    .thrBtmInfo * {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        color: var(--muted) !important;
+        font-weight: normal !important;
+    }
+
+    .thrBtmInfo a,
+    .thrBtmInfo button {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        margin: 0 6px 0 0 !important;
+        padding: 4px 12px !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 999px !important;
+        background: var(--card) !important;
+        color: var(--link) !important;
+        font-size: 13px !important;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .thrBtmInfo a *,
+    .thrBtmInfo button * {
+        color: inherit !important;
+    }
+
+    .thrBtmInfo a:hover,
+    .thrBtmInfo button:hover {
+        border-color: var(--accent) !important;
+        background: #eef3fb !important;
     }
 }
