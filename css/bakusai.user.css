@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.8.0
+@version        1.8.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -607,12 +607,15 @@ url-prefix("https://bakusai.com/thr_res_show/") {
         color: var(--muted) !important;
     }
 
-    /* 区切りの「|」(テキスト) を消して、リンクを同じ幅で並べる */
+    /* 区切りの「|」(テキスト) を消して、リンクを段組みで縦に並べる */
     #relatedBoard :has(> a) {
         display: block !important;
         width: auto !important;
         font-size: 0 !important;
         line-height: 0 !important;
+        column-width: 14em;
+        column-gap: 16px;
+        column-rule: 1px solid var(--line);
     }
 
     #relatedBoard :has(> a)>* {
@@ -621,14 +624,14 @@ url-prefix("https://bakusai.com/thr_res_show/") {
     }
 
     #relatedBoard a {
-        display: inline-block !important;
+        display: block !important;
         box-sizing: border-box;
-        width: 16em;
-        padding: 1px 8px 1px 0 !important;
+        width: auto;
+        break-inside: avoid;
+        padding: 1px 0 !important;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        vertical-align: top;
         color: #3b5680 !important;
         text-decoration: none !important;
     }
