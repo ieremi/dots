@@ -1,11 +1,11 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.15.0
+@version        1.16.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
-@var range      cardH "カードの高さ" [9, 4, 30, 0.5, "em"]
+@var range      cardH "カードの高さ" [3.6, 2, 30, 0.1, "em"]
 @var range      resScale "レスの文字の倍率" [0.8, 0.5, 1.5, 0.05]
 ==/UserStyle== */
 
@@ -218,14 +218,23 @@ url-prefix("https://bakusai.com/areamenu/") {
         background: var(--card) !important;
     }
 
-    /* 改行の多いレスは 2 倍 / 3 倍の高さに (長さは測れないので <br> の数で判断) */
-    dl#res_list .article:has(.resbody>br:nth-of-type(5)) {
+    /* 基本の高さは「番号の行 + 本文 1 行」。
+       改行の多いレスは行数に合わせて 2〜5 マス分に (長さは測れないので <br> の数で判断) */
+    dl#res_list .article:has(.resbody>br) {
         grid-row: span 2;
         height: auto !important;
     }
 
-    dl#res_list .article:has(.resbody>br:nth-of-type(10)) {
+    dl#res_list .article:has(.resbody>br:nth-of-type(4)) {
         grid-row: span 3;
+    }
+
+    dl#res_list .article:has(.resbody>br:nth-of-type(7)) {
+        grid-row: span 4;
+    }
+
+    dl#res_list .article:has(.resbody>br:nth-of-type(10)) {
+        grid-row: span 5;
     }
 
     /* マウスオーバーで全文: 下のカードに重ねて伸ばす */
