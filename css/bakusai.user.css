@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.11.0
+@version        1.12.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -820,9 +820,18 @@ url-prefix("https://bakusai.com/thr_res_show/") {
 /* body#menu-body > #ctgmenu > .ctg_box > ul > li > a.ctg_menu_list_link > p > (span.menu_emoji + span.ctg_menu_list_title) */
 @-moz-document url-prefix("https://bakusai.com/areamenu/") {
 
+    /* ---- 不要要素: 今日の運勢・美しい風景・広告・「全国」バッジ ---- */
+    #fortune_box,
+    #landscape_area_ctg,
+    .menuTopAds,
+    #ctgmenu a.ctg_menu_list_link> :not(p.ctg_menu_list_container),
+    #ctgmenu li:has(> a.ctg_menu_list_link)> :not(a) {
+        display: none !important;
+    }
+
     html,
     body#menu-body {
-        background: var(--bg) !important;
+        background: var(--card) !important;
         color: var(--muted) !important;
         scrollbar-width: thin;
         text-transform: full-width;
@@ -857,7 +866,7 @@ url-prefix("https://bakusai.com/thr_res_show/") {
     }
 
     #ctgmenu li:hover {
-        background-color: var(--card) !important;
+        background-color: #eef3fb !important;
     }
 
     /* 絵文字・アイコン画像・「全国」などのバッジは白黒で薄く */
