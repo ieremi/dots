@@ -23,4 +23,6 @@ fi
 . "$HOME/.cargo/env"
 
 unset LC_ALL
+export LANG=en_GB.UTF-8
+export LC_CTYPE=en_GB.UTF-8
 . "/home/ieremius/.deno/env"
