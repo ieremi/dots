@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.18.0
+@version        1.18.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -290,9 +290,21 @@ url-prefix("https://bakusai.com/areamenu/") {
         grid-auto-flow: row dense;
         gap: 10px;
         padding: 8px !important;
+        /* 最下段のカードがマウスオーバーで伸びても下のナビに届きにくいよう余白を多めに */
+        padding-bottom: 12em !important;
         margin: 0;
         /* px 指定の文字も含めてまとめて縮める */
         zoom: var(--resScale);
+    }
+
+    /* 祖先が重なりの層 (stacking context) を作るとカードの z-index が効かないので解除 */
+    body :has(#res_list),
+    dl#res_list {
+        z-index: auto !important;
+        isolation: auto !important;
+        transform: none !important;
+        filter: none !important;
+        contain: none !important;
     }
 
     /* 1 行目: 番号・日付 | 名前、2 行目: 本文 */
