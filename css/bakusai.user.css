@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.17.0
+@version        1.18.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -64,9 +64,104 @@ url-prefix("https://bakusai.com/areamenu/") {
     }
 
     /* ---- 左ナビなど: 本文を含まない兄弟要素をすべて隠す ---- */
-    body> :not(:has(#res_list, .thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup, #global_menu)):not(#global_menu, #res_anchor_popup, .tipso_bubble, script, style),
-    body :has(#res_list)> :not(:has(#res_list, .thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup)):not(#res_list, .thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup, .tipso_bubble, script, style),
-    body :has(#global_menu)> :not(:has(#global_menu, #res_list, .thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup)):not(#global_menu, #res_list, .thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup, .tipso_bubble, script, style) {
+    body> :not(:has(#res_list, .thr_top, #thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup, #global_menu)):not(#global_menu, #res_anchor_popup, .tipso_bubble, script, style),
+    body :has(#res_list)> :not(:has(#res_list, .thr_top, #thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup)):not(#res_list, .thr_top, #thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup, .tipso_bubble, script, style),
+    body :has(#global_menu)> :not(:has(#global_menu, #res_list, .thr_top, #thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup)):not(#global_menu, #res_list, .thr_top, #thr_top, .paging, .paging_nex_res_and_button, #res_anchor_popup, .tipso_bubble, script, style) {
+        display: none !important;
+    }
+
+    /* ---- スレ主の投稿 (dl#thr_top): 本文・前スレ/次スレ・閲覧数 ---- */
+    dl#thr_top {
+        display: block !important;
+        margin: 8px 8px 0 !important;
+        padding: 6px 10px !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 6px;
+        background: var(--card) !important;
+        color: var(--fg) !important;
+    }
+
+    dl#thr_top dd.body {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    dl#thr_top #threadBody:empty,
+    dl#thr_top dd.body:not(:has(*:not(:empty))) {
+        display: none !important;
+    }
+
+    /* 前スレ / 次スレ */
+    dl#thr_top #thr_pager {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 4px 16px;
+        margin: 2px 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        font-size: 13px !important;
+    }
+
+    dl#thr_top #thr_pager>div {
+        display: flex !important;
+        align-items: baseline;
+        gap: 6px;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        color: var(--muted) !important;
+    }
+
+    dl#thr_top #thr_pager a,
+    dl#thr_top #thr_pager a * {
+        color: var(--link) !important;
+    }
+
+    dl#thr_top [class^="res_emoji_"] {
+        filter: grayscale(1);
+        opacity: 0.6;
+    }
+
+    /* 名前・報告・閲覧数・レス数 */
+    dl#thr_top .author_shoppr_wrap {
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+        margin: 2px 0 0 !important;
+        padding: 0 !important;
+        font-size: 11px !important;
+        color: var(--muted) !important;
+    }
+
+    dl#thr_top .author_shoppr_wrap * {
+        margin: 0 !important;
+        padding: 0 !important;
+        color: var(--muted) !important;
+        background: transparent !important;
+        font-size: 11px !important;
+    }
+
+    dl#thr_top .repo_imp_wrap {
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+    }
+
+    dl#thr_top .thrListContent {
+        display: flex !important;
+        gap: 10px;
+    }
+
+    dl#thr_top .thr_repo_link img {
+        filter: grayscale(1);
+        opacity: 0.6;
+        vertical-align: -2px;
+        margin-right: 2px !important;
+    }
+
+    dl#thr_top .chart_balloon,
+    dl#thr_top .comment_balloon {
         display: none !important;
     }
 
