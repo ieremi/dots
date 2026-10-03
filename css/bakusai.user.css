@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.8.2
+@version        1.9.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -676,5 +676,46 @@ url-prefix("https://bakusai.com/thr_res_show/") {
 
     #relatedBoard .relatedBoardWrap_menu_emoji {
         margin-right: 4px;
+    }
+
+    /* ---- HOT！オススメ (#recommend) ---- */
+    #recommend {
+        margin: 8px !important;
+        padding: 0 !important;
+        background: transparent !important;
+        color: var(--muted) !important;
+        font-size: 13px !important;
+        text-transform: full-width;
+    }
+
+    #recommend .hotIcon {
+        display: inline-block;
+        margin-right: 4px;
+        padding: 0 6px !important;
+        border: 1px solid var(--muted) !important;
+        border-radius: 3px !important;
+        background: transparent !important;
+        color: var(--muted) !important;
+        font-size: 11px !important;
+        font-weight: bold;
+        line-height: 1.5;
+    }
+
+    #recommend .bbs_recommend {
+        margin: 0 4px;
+        color: var(--line) !important;
+    }
+
+    /* 絵文字がリンク文字に直書きなので、文字ごと影で単色に塗る */
+    #recommend a {
+        color: transparent !important;
+        text-shadow: 0 0 0 #3b5680 !important;
+        text-decoration: none !important;
+    }
+
+    #recommend a:hover {
+        text-shadow: 0 0 0 var(--link) !important;
+        text-decoration: underline !important;
+        text-decoration-color: var(--link) !important;
     }
 }
