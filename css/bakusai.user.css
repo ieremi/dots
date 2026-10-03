@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.18.1
+@version        1.18.3
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -89,6 +89,13 @@ url-prefix("https://bakusai.com/areamenu/") {
 
     dl#thr_top #threadBody:empty,
     dl#thr_top dd.body:not(:has(*:not(:empty))) {
+        display: none !important;
+    }
+
+    /* AI 解析・みんなの意見 (レーダーチャート)・おすすめ度・「無料掲載あり」 */
+    dl#thr_top .chart_wrapper,
+    dl#thr_top .shoppr_link,
+    dl#thr_top dd.body:has(#threadBody>.chart_wrapper):not(:has(#threadBody> :not(.chart_wrapper))) {
         display: none !important;
     }
 
