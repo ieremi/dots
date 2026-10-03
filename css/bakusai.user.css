@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.9.0
+@version        1.10.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -514,7 +514,14 @@ url-prefix("https://bakusai.com/thr_tl/") {
         margin: 0 !important;
         padding: 8px !important;
         list-style: none !important;
-        zoom: var(--resScale);
+    }
+
+    /* 一覧の高さはサイト側で固定されているので中身に合わせる */
+    #thrListWrap,
+    #thrListInner,
+    #thrListInner>ul {
+        height: auto !important;
+        min-height: 0 !important;
     }
 
     #thrListInner>ul>li {
@@ -530,6 +537,7 @@ url-prefix("https://bakusai.com/thr_tl/") {
         border: 1px solid var(--line) !important;
         border-radius: 6px;
         background: var(--card) !important;
+        font-size: 13px !important;
         line-height: 1.4;
     }
 
@@ -584,7 +592,94 @@ url-prefix("https://bakusai.com/thr_tl/") {
     #thrListInner .comment_balloon {
         display: none !important;
     }
+
+    /* ---- 一覧の後ろ: すきまを詰める ---- */
+    #inner_container hr,
+    .thrListTxtAd:empty,
+    #banner_bottom_rectangle {
+        display: none !important;
+    }
+
+    /* ---- 次のページ ---- */
+    .paging_nex_res_and_button {
+        margin: 4px 8px !important;
+        padding: 0 !important;
+        text-align: center;
+    }
+
+    .paging_nex_res_and_button a {
+        display: inline-flex !important;
+        align-items: baseline;
+        gap: 10px;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin: 0 !important;
+        padding: 4px 14px !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 999px !important;
+        background: var(--card) !important;
+        text-decoration: none !important;
+        font-size: 13px !important;
+    }
+
+    .paging_nex_res_and_button a:hover {
+        border-color: var(--accent) !important;
+    }
+
+    .paging_nex_res_and_button .paging_next_btn {
+        flex: none;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: var(--muted) !important;
+        font-weight: normal !important;
+    }
+
+    .paging_nex_res_and_button .paging_next_res {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: #3b5680 !important;
+    }
+
+    /* ---- ページ番号 ---- */
+    .paging {
+        margin: 6px 8px 10px !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    .paging a,
+    .paging span,
+    .paging strong,
+    .paging li {
+        border-color: var(--line) !important;
+        box-shadow: none !important;
+        font-size: 13px !important;
+    }
+
+    .paging a {
+        background: var(--card) !important;
+        color: #3b5680 !important;
+    }
+
+    .paging a:hover {
+        border-color: var(--accent) !important;
+        color: var(--link) !important;
+    }
+
+    /* いまのページ (リンクでない番号) */
+    .paging :is(span, strong):not(a *):not(:has(a, i)):not(:empty) {
+        background: var(--accent) !important;
+        color: #fff !important;
+    }
 }
+
 
 /* ==== 関連掲示板 (スレッド一覧・レス単独表示) ==== */
 /* #relatedBoard > #relatedBoardWrap > dl.kanren-box > (dt.kanren-title + dd > ul > li > a) */
