@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.14.0
+@version        1.15.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -201,9 +201,12 @@ url-prefix("https://bakusai.com/areamenu/") {
         zoom: var(--resScale);
     }
 
+    /* 1 行目: 番号・日付 | 名前、2 行目: 本文 */
     dl#res_list .article {
-        display: flex !important;
-        flex-direction: column;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto minmax(0, 1fr);
+        column-gap: 8px;
         box-sizing: border-box;
         height: var(--cardH) !important;
         margin: 0 !important;
@@ -241,17 +244,26 @@ url-prefix("https://bakusai.com/areamenu/") {
         overflow: visible;
     }
 
+    dl#res_list .article dt {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    dl#res_list .article .name_goodbad_box {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+        white-space: nowrap;
+    }
+
     /* 本文だけカード内でスクロール */
     dl#res_list .article dd.body {
-        flex: 1 1 auto;
+        grid-column: 1 / -1;
+        grid-row: 2;
         overflow-y: auto;
         overscroll-behavior: contain;
         scrollbar-width: thin;
-    }
-
-    dl#res_list .article dt,
-    dl#res_list .article .name_goodbad_box {
-        flex: none;
     }
 
     dl#res_list .article *:not(a, span, b, strong, em, font, img) {
