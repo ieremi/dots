@@ -22,5 +22,5 @@ fi
 
 . "$HOME/.cargo/env"
 
-export LC_ALL=C.UTF-8
+unset LC_ALL
 . "/home/ieremius/.deno/env"
