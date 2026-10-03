@@ -1,11 +1,11 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.16.1
+@version        1.16.2
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
-@var range      cardH "カードの高さ" [3.6, 2, 30, 0.1, "em"]
+@var range      cardH "カードの高さ" [4.6, 2, 30, 0.1, "em"]
 @var range      resScale "レスの文字の倍率" [0.8, 0.5, 1.5, 0.05]
 ==/UserStyle== */
 
