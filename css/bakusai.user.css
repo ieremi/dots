@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.16.0
+@version        1.16.1
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -241,7 +241,8 @@ url-prefix("https://bakusai.com/areamenu/") {
     dl#res_list .article:hover {
         align-self: start;
         position: relative;
-        z-index: 5;
+        /* 下に固定したページング (z-index: 10) より手前に */
+        z-index: 20;
         height: auto !important;
         min-height: var(--cardH) !important;
         overflow: visible;
