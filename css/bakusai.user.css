@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.8.1
+@version        1.8.2
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -587,48 +587,75 @@ url-prefix("https://bakusai.com/thr_tl/") {
 }
 
 /* ==== 関連掲示板 (スレッド一覧・レス単独表示) ==== */
+/* #relatedBoard > #relatedBoardWrap > dl.kanren-box > (dt.kanren-title + dd > ul > li > a) */
 @-moz-document url-prefix("https://bakusai.com/thr_tl/"),
 url-prefix("https://bakusai.com/thr_res_show/") {
 
     #relatedBoard {
-        display: block !important;
         margin: 12px 8px !important;
         padding: 8px 0 0 !important;
         border: 0 !important;
         border-top: 1px solid var(--line) !important;
-        background: transparent !important;
         /* 半角カタカナを全角に */
         text-transform: full-width;
     }
 
     #relatedBoard,
     #relatedBoard * {
-        background-color: transparent !important;
-        color: var(--muted) !important;
+        background: transparent !important;
+        border-color: var(--line) !important;
     }
 
-    /* 区切りの「|」(テキスト) を消して、リンクを段組みで縦に並べる */
-    #relatedBoard :has(> a) {
+    #relatedBoard dl.kanren-box {
         display: block !important;
-        width: auto !important;
-        font-size: 0 !important;
-        line-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #relatedBoard dt.kanren-title {
+        margin: 0 0 4px !important;
+        padding: 0 !important;
+        height: auto !important;
+        color: var(--muted) !important;
+        font-size: 12px !important;
+        font-weight: normal !important;
+    }
+
+    #relatedBoard dd {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 段組み */
+    #relatedBoard dd>ul {
         column-width: 14em;
         column-gap: 16px;
         column-rule: 1px solid var(--line);
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
     }
 
-    #relatedBoard :has(> a)>* {
+    #relatedBoard li {
+        display: block !important;
+        break-inside: avoid;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
         font-size: 13px !important;
-        line-height: 1.6 !important;
+        line-height: 1.7 !important;
+    }
+
+    /* 区切りの「|」など */
+    #relatedBoard li::before,
+    #relatedBoard li::after,
+    #relatedBoard a::before,
+    #relatedBoard a::after {
+        content: none !important;
     }
 
     #relatedBoard a {
         display: block !important;
-        box-sizing: border-box;
-        width: auto;
-        break-inside: avoid;
-        padding: 1px 0 !important;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -641,8 +668,13 @@ url-prefix("https://bakusai.com/thr_res_show/") {
         text-decoration: underline !important;
     }
 
-    #relatedBoard img {
+    #relatedBoard .relatedBoardWrap_menu_emoji,
+    #relatedBoard .kanren-uni-emoji {
         filter: grayscale(1);
         opacity: 0.7;
+    }
+
+    #relatedBoard .relatedBoardWrap_menu_emoji {
+        margin-right: 4px;
     }
 }
