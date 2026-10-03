@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.12.1
+@version        1.13.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -460,7 +460,6 @@ url-prefix("https://bakusai.com/areamenu/") {
     .bread_social_wrap,
     #Municipal_Landscape_Images_contents,
     #inner_container hr,
-    #top_menu,
     .rSideBnr,
     #footer,
     footer,
@@ -678,6 +677,48 @@ url-prefix("https://bakusai.com/areamenu/") {
     .paging :is(span, strong):not(a *):not(:has(a, i)):not(:empty) {
         background: var(--accent) !important;
         color: #fff !important;
+    }
+
+    /* ---- 上の検索欄 (#top_menu) ---- */
+    #top_menu {
+        margin: 8px !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+    }
+
+    #top_menu :is(input[type="text"], input[type="search"], input:not([type]), select, button, input[type="submit"], input[type="button"]) {
+        box-sizing: border-box;
+        height: 30px !important;
+        margin: 0 2px !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 4px !important;
+        background: var(--card) !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        color: var(--fg) !important;
+        font-size: 13px !important;
+        font-weight: normal !important;
+    }
+
+    #top_menu :is(button, input[type="submit"], input[type="button"]),
+    #top_menu a {
+        color: #3b5680 !important;
+        cursor: pointer;
+    }
+
+    #top_menu :is(button, input[type="submit"], input[type="button"]):hover {
+        border-color: var(--accent) !important;
+        background: #eef3fb !important;
+    }
+
+    #top_menu :is(input, select):focus {
+        border-color: var(--accent) !important;
+        outline: none !important;
+    }
+
+    #top_menu :is(button, input[type="submit"], input[type="button"]) * {
+        color: inherit !important;
     }
 }
 
