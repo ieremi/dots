@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           bakusai thread
 @namespace      bakusai.com
-@version        1.10.0
+@version        1.11.0
 @description    爆サイのスレッド: 広告・ナビ除去、レスを同じ大きさのカードで並べる、ページングのみ残す。レス単独表示・スレッド一覧もカードに
 @preprocessor   default
 @var range      cardW "カードの幅" [22, 12, 50, 1, "em"]
@@ -12,7 +12,8 @@
 /* ---- 共通: 配色 ---- */
 @-moz-document url-prefix("https://bakusai.com/thr_res/"),
 url-prefix("https://bakusai.com/thr_res_show/"),
-url-prefix("https://bakusai.com/thr_tl/") {
+url-prefix("https://bakusai.com/thr_tl/"),
+url-prefix("https://bakusai.com/areamenu/") {
     :root {
         --bg: #f2f2f2;
         --fg: #222;
@@ -812,5 +813,57 @@ url-prefix("https://bakusai.com/thr_res_show/") {
         text-shadow: 0 0 0 var(--link) !important;
         text-decoration: underline !important;
         text-decoration-color: var(--link) !important;
+    }
+}
+
+/* ==== 左フレームのメニュー (areatop の左) ==== */
+/* body#menu-body > #ctgmenu > .ctg_box > ul > li > a.ctg_menu_list_link > p > (span.menu_emoji + span.ctg_menu_list_title) */
+@-moz-document url-prefix("https://bakusai.com/areamenu/") {
+
+    html,
+    body#menu-body {
+        background: var(--bg) !important;
+        color: var(--muted) !important;
+        scrollbar-width: thin;
+        text-transform: full-width;
+    }
+
+    /* 地の色・枠・影をすべて落ち着かせる */
+    #ctgmenu,
+    #ctgmenu * {
+        background-color: transparent !important;
+        background-image: none !important;
+        border-color: var(--line) !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        color: var(--muted) !important;
+    }
+
+    /* 見出し */
+    #ctgmenu :is(h1, h2, h3, h4, dt, th, .ctg_title, [class*="title"]):not(.ctg_menu_list_title) {
+        color: var(--title) !important;
+    }
+
+    /* 掲示板リンク */
+    #ctgmenu a,
+    #ctgmenu a * {
+        color: #3b5680 !important;
+        text-decoration: none !important;
+    }
+
+    #ctgmenu a:hover,
+    #ctgmenu a:hover * {
+        color: var(--link) !important;
+    }
+
+    #ctgmenu li:hover {
+        background-color: var(--card) !important;
+    }
+
+    /* 絵文字・アイコン画像・「全国」などのバッジは白黒で薄く */
+    #ctgmenu .menu_emoji,
+    #ctgmenu img {
+        filter: grayscale(1);
+        opacity: 0.6;
     }
 }
